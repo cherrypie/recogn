@@ -55,10 +55,14 @@ void solver::procMin(std::vector<label>::iterator label_it)
     std::list<edge_end>::iterator edge_it, min;
     min = edge_it = (*label_it).in.begin();
     for(edge_it++; edge_it != (*label_it).in.end(); ++edge_it)
-        if((*min).weight > (*edge_it).weight)
+        if((*min).weight *
+                objects[(*min).from_obj].labels[(*min).from_label].weight >
+      (*edge_it).weight *
+                objects[(*edge_it).from_obj].labels[(*edge_it).from_label].weight)
             min = edge_it;
 
-    (*label_it).weight *= (*min).weight;
+    (*label_it).weight = (*min).weight *
+            objects[(*min).from_obj].labels[(*min).from_label].weight;
 }
 
 void solver::solve(void (solver::*proc)(std::vector<label>::iterator))
@@ -93,7 +97,10 @@ std::pair <int, int> solver::getMinPrev(int o, int l)
     std::list<edge_end>::iterator edge_it, min;
     min = edge_it = objects[o].labels[l].in.begin();
     for(edge_it++; edge_it != objects[o].labels[l].in.end(); ++edge_it)
-        if((*min).weight > (*edge_it).weight)
+        if((*min).weight *
+                objects[(*min).from_obj].labels[(*min).from_label].weight >
+       (*edge_it).weight *
+                objects[(*edge_it).from_obj].labels[(*edge_it).from_label].weight)
             min = edge_it;
 
     return std::make_pair((*min).from_obj, (*min).from_label);
